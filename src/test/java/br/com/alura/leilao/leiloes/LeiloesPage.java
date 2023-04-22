@@ -1,14 +1,16 @@
 package br.com.alura.leilao.leiloes;
 
+import br.com.alura.leilao.PageObject;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
-public class LeiloesPage {
-    private static final String URL_CADASTRO_LEILOES = "http://localhost:8080/leiloes";
-
-    private WebDriver browser;
+public class LeiloesPage extends PageObject {
+    private static final String URL_CADASTRO_LEILOES = "http://localhost:8080/leiloes/new";
+    private static final String URL_LEILOES = "http://localhost:8080/leiloes";
 
     public LeiloesPage(WebDriver browser) {
-        this.browser = browser;
+        super(browser);
     }
 
     public CadastroLeilaoPage carregarFormulario(){
@@ -16,9 +18,19 @@ public class LeiloesPage {
         return new CadastroLeilaoPage(browser);
     }
 
+    public boolean isLeilaoCadastrado(String nome, String valor, String hoje) {
+        WebElement linhaDaTabela = this.browser.findElement(By.cssSelector("#tabela-leiloes tbody tr:last-child"));
+        WebElement colunaNome = linhaDaTabela.findElement(By.cssSelector("td:nth-child(1)"));
+        WebElement colunaDataAbertura = linhaDaTabela.findElement(By.cssSelector("td:nth-child(2)"));
+        WebElement colunaValorInicial = linhaDaTabela.findElement(By.cssSelector("td:nth-child(3)"));
 
-
-    public void fechar() {
-        this.browser.quit();
+        return colunaNome.getText().equals(nome)
+                && colunaDataAbertura.getText().equals(hoje)
+                && colunaValorInicial.getText().equals(valor);
     }
+
+    public boolean isPaginaAtual() {
+        return this.browser.getCurrentUrl().equals(URL_LEILOES);
+    }
+
 }
